@@ -12,7 +12,7 @@ export default function PersonalizedHero() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading personalized content...</p>
+          <p className="text-slate-600">Loading personalized experience...</p>
         </div>
       </div>
     );
@@ -22,7 +22,7 @@ export default function PersonalizedHero() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
-          <p className="text-red-600">Failed to load personalization</p>
+          <p className="text-red-600">Failed to load personalization data</p>
         </div>
       </div>
     );
@@ -30,7 +30,6 @@ export default function PersonalizedHero() {
 
   const { variant, segment, experimentVariant } = data;
   
-  // Theme-based gradients (blue/green/orange - no pink/purple)
   const themeClasses = {
     default: 'from-slate-50 via-blue-50 to-slate-100',
     premium: 'from-slate-50 via-orange-50 to-slate-100',
@@ -53,16 +52,17 @@ export default function PersonalizedHero() {
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm mb-6 border border-slate-200">
             <Zap className="text-blue-500" size={16} />
             <span className="text-sm font-medium text-slate-700">
-              Personalized for {segment.country || 'you'} · {segment.device}
+              Personalized for {segment.country || 'your region'} · {segment.device}
             </span>
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 mb-6 leading-tight">
-            {variant.content.headline}
+            {variant.content.headline || 'Deliver experiences that adapt at the edge.'}
           </h1>
           
           <p className="text-xl md:text-2xl text-slate-600 mb-10 max-w-3xl mx-auto">
-            {variant.content.subheadline}
+            {variant.content.subheadline || 
+              'Serve each visitor a unique experience powered by real-time edge logic, no backend latency required.'}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -70,7 +70,7 @@ export default function PersonalizedHero() {
               href="/dashboard"
               className={`${accentColors[theme]} text-white font-semibold py-4 px-8 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center gap-2 group`}
             >
-              {variant.content.cta}
+              {variant.content.cta || 'Go to Dashboard'}
               <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
             </Link>
             
@@ -88,7 +88,7 @@ export default function PersonalizedHero() {
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-2">Lightning Fast</h3>
             <p className="text-slate-600">
-              Edge-powered delivery ensures content reaches users in under 50ms globally.
+              Personalized responses are delivered from the nearest edge node — typically under 50ms worldwide.
             </p>
           </div>
 
@@ -96,9 +96,9 @@ export default function PersonalizedHero() {
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
               <Globe className="text-green-600" size={24} />
             </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Global Reach</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Global Intelligence</h3>
             <p className="text-slate-600">
-              Serve personalized content from 24+ edge locations across 5 continents.
+              Automatically adapts content, language, and layout to match each visitor’s location and context.
             </p>
           </div>
 
@@ -106,9 +106,9 @@ export default function PersonalizedHero() {
             <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
               <TrendingUp className="text-orange-600" size={24} />
             </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Smart Targeting</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Adaptive Insights</h3>
             <p className="text-slate-600">
-              AI-powered segmentation delivers the right message to the right user.
+              Get real-time analytics and segmentation data directly from the edge to refine personalization logic.
             </p>
           </div>
         </div>

@@ -1,6 +1,7 @@
-import { PersonalizationConfig } from "@/lib/types";
+import { PersonalizationConfig } from '@/lib/types';
 
 export const personalizationConfig: PersonalizationConfig = {
+  // Define user segments
   segments: [
     {
       id: 'mobile-us',
@@ -20,7 +21,7 @@ export const personalizationConfig: PersonalizationConfig = {
       priority: 8,
       matcher: (req) =>
         req.device === 'desktop' &&
-        ['US', 'GB', 'CA', 'AU'].includes(req.country || ''),
+        ['US', 'GB', 'CA', 'AU', 'NG'].includes(req.country || ''),
     },
     {
       id: 'desktop-default',
@@ -32,18 +33,19 @@ export const personalizationConfig: PersonalizationConfig = {
       id: 'default',
       name: 'Default Segment',
       priority: 1,
-      matcher: () => true,
+      matcher: () => true, // Fallback - always matches
     },
   ],
 
+  // Define content variants for each segment - DASHBOARD THEME
   variants: [
     {
       id: 'mobile-us-variant',
       segment: 'mobile-us',
       content: {
-        headline: '🇺🇸 Fast Delivery Across America',
-        subheadline: 'Free shipping on orders over $50',
-        cta: 'Shop Now',
+        headline: 'Lightning-Fast Edge Performance',
+        subheadline: 'Deliver personalized content in under 50ms across the US',
+        cta: 'View Dashboard',
         theme: 'default',
       },
     },
@@ -51,9 +53,9 @@ export const personalizationConfig: PersonalizationConfig = {
       id: 'mobile-international-variant',
       segment: 'mobile-international',
       content: {
-        headline: '🌍 Global Shipping Available',
-        subheadline: 'Delivering to your country',
-        cta: 'Explore',
+        headline: 'Global Edge Network at Your Fingertips',
+        subheadline: 'Real-time personalization from 24+ edge locations worldwide',
+        cta: 'Explore Analytics',
         theme: 'casual',
       },
     },
@@ -61,9 +63,9 @@ export const personalizationConfig: PersonalizationConfig = {
       id: 'desktop-premium-variant',
       segment: 'desktop-premium',
       content: {
-        headline: 'Premium Quality, Exceptional Service',
-        subheadline: 'Experience the difference with our curated collection',
-        cta: 'Discover More',
+        headline: 'Enterprise-Grade Personalization Layer',
+        subheadline: 'Intelligent content delivery powered by edge computing',
+        cta: 'See Performance Metrics',
         theme: 'premium',
       },
     },
@@ -71,9 +73,9 @@ export const personalizationConfig: PersonalizationConfig = {
       id: 'desktop-default-variant',
       segment: 'desktop-default',
       content: {
-        headline: 'Welcome to Our Store',
-        subheadline: 'Find everything you need in one place',
-        cta: 'Start Shopping',
+        headline: 'Smart Personalization at the Edge',
+        subheadline: 'Deliver the right content to the right user instantly',
+        cta: 'View Dashboard',
         theme: 'default',
       },
     },
@@ -81,21 +83,22 @@ export const personalizationConfig: PersonalizationConfig = {
       id: 'default-variant',
       segment: 'default',
       content: {
-        headline: 'Welcome',
-        subheadline: 'Discover amazing products',
+        headline: 'Edge-Powered Personalization Layer',
+        subheadline: 'Real-time intelligent content delivery with sub-50ms latency',
         cta: 'Get Started',
         theme: 'default',
       },
     },
   ],
 
+  // Define A/B experiments
   experiments: [
     {
       id: 'hero-cta-test',
       name: 'Hero CTA Button Test',
       enabled: true,
       variants: ['control', 'variant-a', 'variant-b'],
-      traffic: 1.0,
+      traffic: 1.0, // 100% of users
     },
   ],
 };
