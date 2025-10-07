@@ -1,7 +1,9 @@
+import PersonalizedHero from "./components/PersonalizeHero";
+
 export default function Home() {
   return (
     <div>
-      <h1>Edge-Powered Personalization Layer</h1>
+      <PersonalizedHero />
     </div>
   );
 }
