@@ -14,7 +14,7 @@ export default function ComingSoon({ darkMode }: ComingSoonProps) {
       <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 opacity-5 rounded-full -mr-16 -mt-16"></div>
       <div className="relative">
         <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
-          🧠 Coming Soon: Rule Builder
+          Coming Soon: Rule Builder
         </h2>
         <p className={`${textSecondary} mb-4`}>
           Create custom personalization rules with visual conditions and actions

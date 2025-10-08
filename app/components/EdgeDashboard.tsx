@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Globe, Zap, Activity, TrendingUp, Clock, Users } from 'lucide-react';
+import { Globe, Zap, Activity, TrendingUp, Clock, Users, Github, Sun, Moon } from 'lucide-react';
 import StatsCard from './StatsCard';
 import RegionList from './RegionList';
 import UserSegments from './UserSegment';
@@ -90,12 +90,24 @@ export default function EdgeDashboard() {
             </h1>
             <p className={`mt-1 ${textSecondary}`}>Real-time intelligent content delivery at the edge</p>
           </div>
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className={`px-4 py-2 rounded-lg ${cardBg} border ${borderColor} hover:opacity-80 transition-opacity`}
-          >
-            {darkMode ? '☀️ Light' : '🌙 Dark'}
-          </button>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className={`p-2 rounded-lg border ${borderColor} hover:opacity-80 transition-opacity`}
+            >
+              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+            
+            <a 
+              href="https://github.com/fohalabi/edgesync"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`p-2 hover:opacity-80 transition-opacity flex items-center gap-2`}
+            >
+              <Github size={20} />
+            </a>
+          </div>
         </div>
       </div>
 
@@ -158,22 +170,6 @@ export default function EdgeDashboard() {
         {/* Coming Soon Section */}
         <ComingSoon darkMode={darkMode} />
       </div>
-
-      <style jsx>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        .animate-slideIn {
-          animation: slideIn 0.3s ease-out;
-        }
-      `}</style>
     </div>
   );
 }
