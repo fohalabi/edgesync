@@ -4,10 +4,18 @@ import type { NextRequest } from 'next/server';
 import { PersonalizationEngine } from '@/lib/personalization/engine';
 import { getCookie, generateUserId, COOKIES } from '@/lib/utils/cookies';
 
+declare module 'next/server' {
+  interface NextRequest {
+    geo?: {
+      country?: string;
+    }
+  }
+}
+
 export function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
-  const country = (request as any).geo?.country;
+  const country = request.geo?.country || request.headers.get('x-vercel-ip-country') || 'US';
   const userAgent = request.headers.get('user-agent') || '';
   const cookieString = request.headers.get('cookie') || '';
   const pathname = request.nextUrl.pathname;
@@ -48,3 +56,5 @@ export const config = {
     '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*$).*)',
   ],
 };
+
+export const runtime = 'edge';

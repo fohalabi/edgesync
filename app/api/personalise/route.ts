@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PersonalizationEngine } from '@/lib/personalization/engine';
 
+declare module 'next/server' {
+  interface NextRequest {
+    geo?: {
+      country?: string;
+    };
+  }
+}
+
 export const runtime = 'edge';
 
 export async function GET(request: NextRequest) {
   try {
-    const country = (request as any).geo?.country;
+    const country = request.geo?.country || request.headers.get('x-vercel-ip-country') || 'US';
     const userAgent = request.headers.get('user-agent') || '';
     const cookieString = request.headers.get('cookie') || '';
     const pathname = request.nextUrl.searchParams.get('pathname') || '/';
