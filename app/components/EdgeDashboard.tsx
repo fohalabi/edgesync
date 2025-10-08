@@ -82,13 +82,10 @@ export default function EdgeDashboard() {
     <div className={`min-h-screen ${bgClass} transition-colors duration-200 p-6`}>
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              <Zap className="text-blue-500" size={32} />
-              EdgeSync
-            </h1>
-            <p className={`mt-1 ${textSecondary}`}>Real-time intelligent content delivery at the edge</p>
+          <div className="flex items-center justify-between">
+          <div className='flex items-center gap-3'>
+            <Zap className="text-blue-500" size={32} />
+              <span className='text-xl sm:text-2xl font-bold'>EdgeSync</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -109,6 +106,8 @@ export default function EdgeDashboard() {
             </a>
           </div>
         </div>
+
+        <p className={`mt-3 ${textSecondary}`}>Real-time intelligent content delivery at the edge</p>
       </div>
 
       <div className="max-w-7xl mx-auto space-y-6">
