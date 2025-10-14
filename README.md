@@ -127,8 +127,8 @@ F --> G[User Sees Personalized UI]
 
 ```bash
 # 1️⃣ Clone repository
-git clone https://github.com/yourusername/edge-personalization.git
-cd edge-personalization
+git clone https://github.com/fohalabi/edgesync.git
+cd edgesync
 
 # 2️⃣ Install dependencies
 npm install
