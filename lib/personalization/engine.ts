@@ -34,6 +34,11 @@ export class PersonalizationEngine {
       ),
       headers: new Map(),
       pathname,
+      visitor: isNewUser ? 'new' : 'returning',
+      language: overrides?.language || 'en',
+      localHour: overrides?.localHour ?? new Date().getUTCHours(),
+      referrer: overrides?.referrer || 'direct',
+      network: overrides?.network || 'standard',
     };
 
     let experimentVariant: string | undefined;
@@ -56,7 +61,7 @@ export class PersonalizationEngine {
       }
     }
 
-    const segment = buildUserSegment(request, isNewUser, experimentVariant);
+    const { segment, decision } = buildUserSegment(request, isNewUser, experimentVariant);
     const variant = selectVariant(segment);
 
     return {
@@ -64,6 +69,7 @@ export class PersonalizationEngine {
       segment,
       variant,
       experimentVariant,
+      decision,
     };
   }
 
