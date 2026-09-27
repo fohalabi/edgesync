@@ -26,6 +26,7 @@ export default function UserSegments({ segments, darkMode }: UserSegmentsProps) 
         User Segments
       </h2>
       <div className="space-y-4">
+        {segments.length === 0 && <p className={`py-10 text-center text-sm ${textSecondary}`}>No segment impressions recorded yet.</p>}
         {segments.map((segment, idx) => (
           <div key={idx}>
             <div className="flex justify-between mb-2">

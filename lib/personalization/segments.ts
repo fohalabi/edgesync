@@ -1,6 +1,7 @@
 import { UserSegment, PersonalizationRequest } from '../types';
 import { personalizationConfig } from '@/config/personalization';
 import { evaluateRules } from './rules';
+import type { SegmentRule } from '../types';
 
 export function detectDevice(userAgent: string): 'mobile' | 'desktop' | 'tablet' {
   const ua = userAgent.toLowerCase();
@@ -19,9 +20,10 @@ export function detectDevice(userAgent: string): 'mobile' | 'desktop' | 'tablet'
 export function buildUserSegment(
   request: PersonalizationRequest,
   isNewUser: boolean,
-  experimentVariant?: string
+  experimentVariant?: string,
+  rules: SegmentRule[] = personalizationConfig.segments
 ){
-  const decision = evaluateRules(personalizationConfig.segments, request);
+  const decision = evaluateRules(rules, request);
 
   const segment: UserSegment = {
     id: decision.selectedRuleId,

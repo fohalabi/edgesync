@@ -1,4 +1,4 @@
-import { PersonalizationOverrides, PersonalizationRequest, PersonalizationResult } from '@/lib/types';
+import { ContentVariant, PersonalizationOverrides, PersonalizationRequest, PersonalizationResult, SegmentRule } from '@/lib/types';
 import { getCookie, generateUserId, COOKIES } from '@/lib/utils/cookies';
 import { assignExperimentVariant } from '../utils/hash';
 import { detectDevice, buildUserSegment } from './segments';
@@ -11,7 +11,8 @@ export class PersonalizationEngine {
     userAgent: string,
     cookieString: string,
     pathname: string,
-    overrides?: PersonalizationOverrides
+    overrides?: PersonalizationOverrides,
+    runtime?: { rules: SegmentRule[]; variants: ContentVariant[] }
   ): PersonalizationResult {
     const existingUserId = getCookie(COOKIES.USER_ID, cookieString);
     const userId = existingUserId || generateUserId();
@@ -61,8 +62,8 @@ export class PersonalizationEngine {
       }
     }
 
-    const { segment, decision } = buildUserSegment(request, isNewUser, experimentVariant);
-    const variant = selectVariant(segment);
+    const { segment, decision } = buildUserSegment(request, isNewUser, experimentVariant, runtime?.rules);
+    const variant = selectVariant(segment, runtime?.variants);
 
     return {
       userId,

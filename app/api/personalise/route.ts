@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PersonalizationEngine } from '@/lib/personalization/engine';
 import type { PersonalizationOverrides } from '@/lib/types';
+import { getPublishedRuntimeConfig } from '@/lib/rules/store';
+import { recordImpression } from '@/lib/analytics';
 
 declare module 'next/server' {
   interface NextRequest {
@@ -10,10 +12,11 @@ declare module 'next/server' {
   }
 }
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   try {
+    const startedAt = Date.now();
     const country = request.geo?.country || request.headers.get('x-vercel-ip-country') || undefined;
     const userAgent = request.headers.get('user-agent') || '';
     const cookieString = request.headers.get('cookie') || '';
@@ -35,13 +38,20 @@ export async function GET(request: NextRequest) {
     if (referrerOverride === 'direct' || referrerOverride === 'search' || referrerOverride === 'social' || referrerOverride === 'campaign') overrides.referrer = referrerOverride;
     if (networkOverride === 'fast' || networkOverride === 'standard' || networkOverride === 'slow') overrides.network = networkOverride;
 
+    const runtime = await getPublishedRuntimeConfig();
     const result = PersonalizationEngine.personalize(
       country,
       userAgent,
       cookieString,
       pathname,
-      overrides
+      overrides,
+      runtime
     );
+
+    const userAgentValue = request.headers.get('user-agent') || '';
+    if (!/bot|crawler|spider|preview/i.test(userAgentValue)) {
+      try { await recordImpression(result, Date.now() - startedAt); } catch (eventError) { console.error('Analytics event error:', eventError); }
+    }
 
     return NextResponse.json({
       success: true,
