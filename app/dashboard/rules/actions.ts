@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/auth/session';
 import { deleteRule, duplicateRule, saveRule } from '@/lib/rules/store';
 import type { RuleGroup } from '@/lib/types';
+import { recordAudit } from '@/lib/audit';
 
 type Payload = { id?: string; slug: string; name: string; priority: number; enabled: boolean; isFallback: boolean; status: 'draft' | 'published'; expression: RuleGroup; content: { headline: string; subheadline: string; cta: string; theme?: 'default' | 'premium' | 'casual' } };
 export type SaveRuleState = { error: string | null };
@@ -24,6 +25,7 @@ export async function saveRuleAction(_: SaveRuleState, formData: FormData): Prom
     const intent = String(formData.get('intent') || 'draft');
     payload.status = intent === 'publish' ? 'published' : 'draft';
     const saved = await saveRule({ ...payload, id: payload.id || '' }, session.id);
+    await recordAudit(session.id, intent === 'publish' ? 'rule.published' : 'rule.saved', 'rule', saved.id, { name: saved.name, slug: saved.slug });
     revalidatePath('/dashboard'); revalidatePath('/dashboard/rules');
     redirect(`/dashboard/rules/${saved.id}?saved=${intent}`);
   } catch (error) {
@@ -33,6 +35,6 @@ export async function saveRuleAction(_: SaveRuleState, formData: FormData): Prom
   }
 }
 
-export async function deleteRuleAction(formData: FormData) { const session = await getSession(); if (!session) redirect('/login'); await deleteRule(String(formData.get('id'))); revalidatePath('/dashboard/rules'); redirect('/dashboard/rules'); }
-export async function duplicateRuleAction(formData: FormData) { const session = await getSession(); if (!session) redirect('/login'); const copy = await duplicateRule(String(formData.get('id')), session.id); revalidatePath('/dashboard/rules'); redirect(`/dashboard/rules/${copy.id}`); }
-export async function restoreRuleAction(formData: FormData) { const session = await getSession(); if (!session) redirect('/login'); const payload = validate(JSON.parse(String(formData.get('snapshot')))); payload.status = 'draft'; const saved = await saveRule({ ...payload, id: payload.id || '' }, session.id); revalidatePath('/dashboard/rules'); redirect(`/dashboard/rules/${saved.id}?saved=restored`); }
+export async function deleteRuleAction(formData: FormData) { const session = await getSession(); if (!session) redirect('/login'); const id = String(formData.get('id')); await deleteRule(id); await recordAudit(session.id, 'rule.deleted', 'rule', id); revalidatePath('/dashboard/rules'); redirect('/dashboard/rules'); }
+export async function duplicateRuleAction(formData: FormData) { const session = await getSession(); if (!session) redirect('/login'); const copy = await duplicateRule(String(formData.get('id')), session.id); await recordAudit(session.id, 'rule.duplicated', 'rule', copy.id, { name: copy.name }); revalidatePath('/dashboard/rules'); redirect(`/dashboard/rules/${copy.id}`); }
+export async function restoreRuleAction(formData: FormData) { const session = await getSession(); if (!session) redirect('/login'); const payload = validate(JSON.parse(String(formData.get('snapshot')))); payload.status = 'draft'; const saved = await saveRule({ ...payload, id: payload.id || '' }, session.id); await recordAudit(session.id, 'rule.restored', 'rule', saved.id, { name: saved.name }); revalidatePath('/dashboard/rules'); redirect(`/dashboard/rules/${saved.id}?saved=restored`); }

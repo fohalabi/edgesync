@@ -1,13 +1,10 @@
 ##  EdgeSync
 
-A lightweight **Edge-powered personalization engine** that tailors website content to each user **instantly**, based on **location**, **device**, and **cookies**, all handled at the edge for **speed, scalability, and low latency**.
+A full-stack, context-aware personalization platform for designing rules, running controlled experiments, and measuring anonymous conversion performance from one Next.js application.
 
 ###  Overview
 
-This MVP demonstrates how **personalized experiences** can be served right from the edge with no backend round trips or page reloads.
-It intercepts requests using **Next.js Middleware**, detects user context, and renders personalized variants immediately.
-
-It also includes a polished **analytics dashboard preview**. Its metrics are clearly labelled demo data; real event ingestion is planned for a later phase.
+EdgeSync evaluates location, device, visitor, language, time, referrer, network, and pathname signals against explainable rules. Administrators can publish content, run deterministic weighted experiments, inspect live analytics, and review a durable activity trail.
 
 ---
 
@@ -15,10 +12,12 @@ It also includes a polished **analytics dashboard preview**. Its metrics are cle
 
 *  **Edge Middleware Integration** — detects context at the edge before response.
 *  **Location & Segment Awareness** — adapts UI content per user region.
-*  **Interactive Dashboard Preview** — explore the planned performance, segment, and decision-log experience.
+*  **Measured Analytics** — inspect impressions, conversions, latency, regions, segments, and recent decisions.
 *  **Persistent Context** — uses cookies to maintain personalized states.
-*  **No Database Required** — Phase 1 personalization runs from configuration and durable anonymous cookies.
-*  **Configurable Rules** — easy to modify segments and variants.
+*  **Visual Rule Builder** — draft, preview, publish, duplicate, restore, and explain prioritized rules.
+*  **Experiment Studio** — deterministic weighted assignment, audience targeting, uplift reporting, and winner promotion.
+*  **Privacy Controls** — analytics are opt-in, visitor identifiers are hashed, and events have configurable retention.
+*  **Administrator Audit Trail** — important rule and experiment changes are recorded for review.
 
 ---
 
@@ -123,26 +122,28 @@ F --> G[User Sees Personalized UI]
 
 ---
 
-###  Setup & Installation
+### Setup & installation
 
 ```bash
-# 1️⃣ Clone repository
+# 1. Clone and install
 git clone https://github.com/fohalabi/edgesync.git
 cd edgesync
-
-# 2️⃣ Install dependencies
 npm install
 
-# 3️⃣ Run locally
-npm run dev
+# 2. Configure the environment
+copy .env.example .env.local
 
-# 4️⃣ Deploy to Vercel (Edge Runtime)
-vercel deploy
+# 3. Prepare PostgreSQL and seed the administrator
+npm run db:migrate
+npm run db:seed
+
+# 4. Run locally
+npm run dev
 ```
 
 ### Local authentication setup
 
-Phase 2 uses a PostgreSQL-backed administrator account and a signed HTTP-only session. Add `DATABASE_URL`, `SESSION_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and optionally `ADMIN_NAME` to `.env.local`, then run:
+Authentication uses a PostgreSQL-backed administrator and a signed HTTP-only session. Copy `.env.example` to `.env.local` (or update the scripts if you intentionally use another env filename), then set `DATABASE_URL`, `SESSION_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_NAME`.
 
 ```bash
 npm run db:migrate
@@ -152,6 +153,16 @@ npm run db:seed
 `ADMIN_PASSWORD` must contain at least 12 characters. The seed command stores only its bcrypt hash and safely updates the same administrator when run again.
 
 Analytics events use a 30-day reporting window. Set `ANALYTICS_RETENTION_DAYS` in `.env.local` and periodically run `npm run analytics:prune` to remove older events.
+
+### Quality and deployment checks
+
+```bash
+npm test
+npm run lint
+npm run build
+```
+
+Before deploying, use a managed PostgreSQL database, generate a unique 32+ character `SESSION_SECRET`, use a strong administrator password, apply migrations, and schedule `npm run analytics:prune`. The application sends baseline browser hardening headers and never records analytics before visitor consent.
 
 ---
 
@@ -164,7 +175,7 @@ Analytics events use a 30-day reporting window. Set `ANALYTICS_RETENTION_DAYS` i
 * [x] **Phase 5 — Rule builder:** persistent drafts and published rules, visual conditions, live preview, duplication, JSON tools, and version history.
 * [x] **Phase 6 — Analytics:** privacy-preserving impressions and conversions, latency percentiles, regional and segment reporting, live activity, and retention pruning.
 * [x] **Phase 7 — Experiment studio:** weighted deterministic assignment, audience targeting, lifecycle controls, conversion results, and winner promotion.
-* [ ] **Phase 8 — Production polish:** privacy, accessibility, auditability, and deployment hardening.
+* [x] **Phase 8 — Production polish:** consent-gated analytics, accessibility and responsive improvements, administrator audit history, safer destructive actions, security headers, documentation, and deployment hardening.
 
 ---
 🔗 [LinkedIn](https://linkedin.com/in/fohalabi) 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { PersonalizationResult } from '@/lib/types';
+import { readAnalyticsConsent } from '@/app/components/ConsentBanner';
 
 const simulationKeys = ['country', 'device', 'visitor', 'language', 'hour', 'referrer', 'network'];
 
@@ -46,6 +47,7 @@ export function usePersonalization() {
         if (!requestParams.has('hour')) requestParams.set('hour', String(new Date().getHours()));
         if (!requestParams.has('referrer')) requestParams.set('referrer', detectedReferrer());
         if (!requestParams.has('network')) requestParams.set('network', detectedNetwork());
+        requestParams.set('analytics', readAnalyticsConsent() === 'granted' ? 'granted' : 'denied');
 
         const response = await fetch(`/api/personalise?${requestParams.toString()}`);
         if (!response.ok) throw new Error(`Personalization API error: ${response.status}`);
@@ -64,7 +66,8 @@ export function usePersonalization() {
     void fetchPersonalization(true);
     window.addEventListener('popstate', refresh);
     window.addEventListener('edgesync:simulation', refresh);
-    return () => { cancelled = true; window.removeEventListener('popstate', refresh); window.removeEventListener('edgesync:simulation', refresh); };
+    window.addEventListener('edgesync:consent', refresh);
+    return () => { cancelled = true; window.removeEventListener('popstate', refresh); window.removeEventListener('edgesync:simulation', refresh); window.removeEventListener('edgesync:consent', refresh); };
   }, []);
 
   return { data, loading, updating, error, simulationActive };

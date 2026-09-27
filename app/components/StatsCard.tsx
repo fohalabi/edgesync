@@ -12,23 +12,23 @@ interface StatsCardProps {
   darkMode: boolean;
 }
 
-export default function StatsCard({ title, value, trend, trendUp, icon: Icon, iconColor, darkMode }: StatsCardProps) {
-  const cardBg = darkMode ? 'bg-gray-800' : 'bg-white';
-  const borderColor = darkMode ? 'border-gray-700' : 'border-gray-200';
-  const textSecondary = darkMode ? 'text-gray-400' : 'text-gray-600';
+export default function StatsCard({ title, value, trend, icon: Icon, iconColor, darkMode }: StatsCardProps) {
+  const cardBg = darkMode ? 'bg-[#0d1c18]' : 'bg-white';
+  const borderColor = darkMode ? 'border-white/10' : 'border-[#10251e]/10';
+  const textSecondary = darkMode ? 'text-white/40' : 'text-[#10251e]/50';
 
   return (
-    <div className={`${cardBg} p-6 rounded-xl border ${borderColor}`}>
-      <div className="flex items-center justify-between">
+    <article className={`${cardBg} rounded-2xl border ${borderColor} p-5 transition hover:-translate-y-0.5`}>
+      <div className="flex items-start justify-between">
         <div>
-          <p className={`text-sm ${textSecondary}`}>{title}</p>
-          <p className="text-3xl font-bold mt-1">{value}</p>
-          <p className={`text-sm mt-1 ${trendUp ? 'text-green-500' : 'text-red-500'}`}>
-            {trendUp ? '↑' : '↓'} {trend}
+          <p className={`text-xs font-medium ${textSecondary}`}>{title}</p>
+          <p className="mt-3 text-3xl font-semibold tracking-[-.04em]">{value}</p>
+          <p className={`mt-2 text-xs ${textSecondary}`}>
+            {trend}
           </p>
         </div>
-        <Icon className={iconColor} size={32} />
+        <span className={`grid h-10 w-10 place-items-center rounded-xl ${darkMode ? 'bg-white/5' : 'bg-[#10251e]/5'} ${iconColor}`}><Icon size={19} /></span>
       </div>
-    </div>
+    </article>
   );
 }
