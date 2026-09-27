@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { Activity, Check, ShieldCheck, Sparkles, Zap } from 'lucide-react';
 import { getSession } from '@/lib/auth/session';
 import LoginForm from './LoginForm';
+import ThemeSurface from '@/app/components/ThemeSurface';
 
 export const metadata = { title: 'Sign in' };
 
@@ -12,7 +13,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const nextPath = next?.startsWith('/') && !next.startsWith('//') ? next : '/dashboard';
 
   return (
-    <main className="relative grid min-h-screen overflow-hidden bg-[#07110f] text-white lg:grid-cols-[1.05fr_.95fr]">
+    <ThemeSurface><main className="relative grid min-h-screen overflow-hidden bg-[#07110f] text-white lg:grid-cols-[1.05fr_.95fr]">
       <div className="edge-grid absolute inset-0 opacity-30" />
       <section className="relative hidden min-h-screen flex-col justify-between border-r border-white/8 p-10 lg:flex xl:p-16">
         <Link href="/" className="flex w-fit items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-[#76f7b2] text-[#07110f]"><Zap size={20} fill="currentColor" /></span><span className="text-lg font-semibold tracking-tight">EdgeSync</span></Link>
@@ -35,7 +36,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <p className="mt-6 text-center text-xs text-white/30">Protected by an encrypted, HTTP-only session.</p>
         </div>
       </section>
-    </main>
+    </main></ThemeSurface>
   );
 }
 

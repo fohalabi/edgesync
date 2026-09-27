@@ -53,7 +53,7 @@ export default function EdgeDashboard({ user, analytics }: { user: SessionUser; 
 
         <div className="mt-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
           <div><h1 className="text-3xl font-semibold tracking-[-.04em] sm:text-4xl">Edge intelligence, at a glance.</h1><p className={`mt-2 ${textSecondary}`}>Measured personalization activity from the last 30 days.</p></div>
-          <div className="flex gap-2"><Link href="/dashboard/rules" className="flex items-center gap-2 rounded-full border border-current/10 px-4 py-2 text-sm"><Settings2 size={15} />Manage rules</Link><span className="w-fit rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-xs font-medium text-emerald-500">Live data</span></div>
+          <div className="flex gap-2"><Link href="/dashboard/rules" className="flex items-center gap-2 rounded-full border border-current/10 px-4 py-2 text-sm"><Settings2 size={15} />Rules</Link><Link href="/dashboard/experiments" className="rounded-full border border-current/10 px-4 py-2 text-sm">Experiments</Link><span className="w-fit rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-xs font-medium text-emerald-500">Live data</span></div>
         </div>
       </div>
 

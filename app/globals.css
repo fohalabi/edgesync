@@ -46,3 +46,31 @@ button, a { -webkit-tap-highlight-color: transparent; }
   background-size: 64px 64px;
   mask-image: linear-gradient(to bottom, black 15%, transparent 88%);
 }
+
+.workspace-theme {
+  --workspace-page: #07110f;
+  --workspace-card: #0d1c18;
+  --workspace-text: #ffffff;
+  --workspace-muted: rgba(255, 255, 255, .45);
+  min-height: 100vh;
+}
+
+.workspace-light {
+  --workspace-page: #f4f8f4;
+  --workspace-card: #ffffff;
+  --workspace-text: #10251e;
+  --workspace-muted: rgba(16, 37, 30, .58);
+  color-scheme: light;
+}
+
+.workspace-light main,
+.workspace-light [class*="bg-[#07110f]"] { background-color: var(--workspace-page) !important; color: var(--workspace-text) !important; }
+.workspace-light [class*="bg-[#0d1c18]"],
+.workspace-light [class*="bg-white/["] { background-color: var(--workspace-card) !important; }
+.workspace-light [class*="text-white"] { color: var(--workspace-muted) !important; }
+.workspace-light h1, .workspace-light h2, .workspace-light h3,
+.workspace-light p[class*="font-medium"], .workspace-light a[class*="font-semibold"] { color: var(--workspace-text); }
+.workspace-light [class*="border-white"] { border-color: rgba(16, 37, 30, .12) !important; }
+.workspace-light input, .workspace-light textarea, .workspace-light select { color: var(--workspace-text); background-color: rgba(255,255,255,.72) !important; }
+.workspace-light input::placeholder, .workspace-light textarea::placeholder { color: rgba(16,37,30,.32) !important; }
+.workspace-light option { color: #10251e; background: #ffffff; }

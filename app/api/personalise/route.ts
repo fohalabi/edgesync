@@ -3,6 +3,7 @@ import { PersonalizationEngine } from '@/lib/personalization/engine';
 import type { PersonalizationOverrides } from '@/lib/types';
 import { getPublishedRuntimeConfig } from '@/lib/rules/store';
 import { recordImpression } from '@/lib/analytics';
+import { getRunningExperiments } from '@/lib/experiments/store';
 
 declare module 'next/server' {
   interface NextRequest {
@@ -39,13 +40,14 @@ export async function GET(request: NextRequest) {
     if (networkOverride === 'fast' || networkOverride === 'standard' || networkOverride === 'slow') overrides.network = networkOverride;
 
     const runtime = await getPublishedRuntimeConfig();
+    const experiments = await getRunningExperiments();
     const result = PersonalizationEngine.personalize(
       country,
       userAgent,
       cookieString,
       pathname,
       overrides,
-      runtime
+      { ...runtime, experiments }
     );
 
     const userAgentValue = request.headers.get('user-agent') || '';
@@ -59,6 +61,8 @@ export async function GET(request: NextRequest) {
         segment: result.segment,
         variant: result.variant,
         experimentVariant: result.experimentVariant,
+        experimentId: result.experimentId,
+        experimentGoal: result.experimentGoal,
         decision: result.decision,
       },
     });

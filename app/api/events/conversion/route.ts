@@ -7,6 +7,6 @@ export async function POST(request: NextRequest) {
   if (!userId) return NextResponse.json({ success: false }, { status: 400 });
   const body = await request.json().catch(() => ({}));
   const goal = typeof body.goal === 'string' ? body.goal : 'primary-cta';
-  await recordConversion(userId, typeof body.ruleId === 'string' ? body.ruleId : null, typeof body.variantId === 'string' ? body.variantId : null, goal);
+  await recordConversion(userId, typeof body.ruleId === 'string' ? body.ruleId : null, typeof body.variantId === 'string' ? body.variantId : null, goal, typeof body.experimentId==='string'?body.experimentId:null, typeof body.experimentVariant==='string'?body.experimentVariant:null);
   return NextResponse.json({ success: true });
 }

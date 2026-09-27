@@ -28,3 +28,12 @@ export function assignExperimentVariant(
     const variantIndex = consistentHash(userId, experimentId, variants.length);
     return variants[variantIndex];
 }
+
+export function assignWeightedVariant(userId: string, experimentId: string, variants: Array<{ key: string; weight: number }>, traffic: number): string | undefined {
+    if (!variants.length || consistentHash(userId, `${experimentId}-include`, 100) >= traffic) return undefined;
+    const total = variants.reduce((sum, variant) => sum + variant.weight, 0);
+    const bucket = consistentHash(userId, experimentId, total);
+    let cursor = 0;
+    for (const variant of variants) { cursor += variant.weight; if (bucket < cursor) return variant.key; }
+    return variants[variants.length - 1].key;
+}

@@ -1,9 +1,10 @@
-import { ContentVariant, PersonalizationOverrides, PersonalizationRequest, PersonalizationResult, SegmentRule } from '@/lib/types';
+import { ContentVariant, PersonalizationOverrides, PersonalizationRequest, PersonalizationResult, RuntimeExperiment, SegmentRule } from '@/lib/types';
 import { getCookie, generateUserId, COOKIES } from '@/lib/utils/cookies';
-import { assignExperimentVariant } from '../utils/hash';
+import { assignExperimentVariant, assignWeightedVariant } from '../utils/hash';
 import { detectDevice, buildUserSegment } from './segments';
 import { selectVariant } from './variants';
 import { personalizationConfig } from '@/config/personalization';
+import { evaluateGroup } from './rules';
 
 export class PersonalizationEngine {
   static personalize(
@@ -12,7 +13,7 @@ export class PersonalizationEngine {
     cookieString: string,
     pathname: string,
     overrides?: PersonalizationOverrides,
-    runtime?: { rules: SegmentRule[]; variants: ContentVariant[] }
+    runtime?: { rules: SegmentRule[]; variants: ContentVariant[]; experiments?: RuntimeExperiment[] }
   ): PersonalizationResult {
     const existingUserId = getCookie(COOKIES.USER_ID, cookieString);
     const userId = existingUserId || generateUserId();
@@ -42,12 +43,23 @@ export class PersonalizationEngine {
       network: overrides?.network || 'standard',
     };
 
+    const built = buildUserSegment(request, isNewUser, undefined, runtime?.rules);
+    const segment = built.segment;
+    const decision = built.decision;
     let experimentVariant: string | undefined;
-    const activeExperiment = personalizationConfig.experiments.find(
-      (exp) => exp.enabled
-    );
+    let experimentId: string | undefined;
+    let experimentGoal: string | undefined;
+    let experimentContent: Partial<ContentVariant['content']> | undefined;
+    const runtimeExperiment = runtime?.experiments?.find((experiment) => experiment.targetSegment === segment.id && evaluateGroup(experiment.audience, request).matched);
 
-    if (activeExperiment) {
+    if (runtimeExperiment) {
+      experimentId = runtimeExperiment.id;
+      experimentGoal = runtimeExperiment.goal;
+      experimentVariant = assignWeightedVariant(userId, runtimeExperiment.id, runtimeExperiment.variants, runtimeExperiment.traffic);
+      experimentContent = runtimeExperiment.variants.find((variant) => variant.key === experimentVariant)?.content;
+    } else if (!runtime?.experiments?.length) {
+      const activeExperiment = personalizationConfig.experiments.find((exp) => exp.enabled);
+      if (activeExperiment) {
       const existingVariant = getCookie(COOKIES.EXPERIMENT, cookieString);
       
       if (existingVariant) {
@@ -61,15 +73,18 @@ export class PersonalizationEngine {
         );
       }
     }
-
-    const { segment, decision } = buildUserSegment(request, isNewUser, experimentVariant, runtime?.rules);
-    const variant = selectVariant(segment, runtime?.variants);
+    }
+    segment.experimentVariant = experimentVariant;
+    const baseVariant = selectVariant(segment, runtime?.variants);
+    const variant = experimentContent ? { ...baseVariant, content: { ...baseVariant.content, ...experimentContent } } : baseVariant;
 
     return {
       userId,
       segment,
       variant,
       experimentVariant,
+      experimentId,
+      experimentGoal,
       decision,
     };
   }
