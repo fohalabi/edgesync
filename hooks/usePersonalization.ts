@@ -1,52 +1,71 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { PersonalizationResult } from '@/lib/types';
+import { useEffect, useState } from 'react';
+import type { PersonalizationResult } from '@/lib/types';
+
+const simulationKeys = ['country', 'device', 'visitor', 'language', 'hour', 'referrer', 'network'];
+
+function detectedReferrer() {
+  const value = document.referrer.toLowerCase();
+  if (!value) return 'direct';
+  if (/google|bing|duckduckgo|yahoo/.test(value)) return 'search';
+  if (/facebook|instagram|linkedin|twitter|x\.com|tiktok/.test(value)) return 'social';
+  return 'campaign';
+}
+
+function detectedNetwork() {
+  const connection = (navigator as Navigator & { connection?: { effectiveType?: string } }).connection;
+  if (!connection?.effectiveType) return 'standard';
+  if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') return 'slow';
+  if (connection.effectiveType === '4g') return 'fast';
+  return 'standard';
+}
 
 export function usePersonalization() {
   const [data, setData] = useState<PersonalizationResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [simulationActive, setSimulationActive] = useState(false);
 
   useEffect(() => {
-    async function fetchPersonalization() {
+    let cancelled = false;
+
+    async function fetchPersonalization(initial = false) {
+      if (!initial) setUpdating(true);
+      setError(null);
       try {
-        // match the API route folder spelling ('personalise')
-        const params = new URLSearchParams(window.location.search);
-        const simulationParams = new URLSearchParams();
-        for (const key of ['country', 'device', 'visitor']) {
-          const value = params.get(key);
-          if (value) simulationParams.set(key, value);
+        const urlParams = new URLSearchParams(window.location.search);
+        const requestParams = new URLSearchParams();
+        for (const key of simulationKeys) {
+          const value = urlParams.get(key);
+          if (value) requestParams.set(key, value);
         }
-        setSimulationActive(simulationParams.size > 0);
-        const query = simulationParams.toString();
-        const response = await fetch(`/api/personalise${query ? `?${query}` : ''}`);
+        setSimulationActive(simulationKeys.some((key) => urlParams.has(key)));
+        if (!requestParams.has('language')) requestParams.set('language', navigator.language.split('-')[0].toLowerCase());
+        if (!requestParams.has('hour')) requestParams.set('hour', String(new Date().getHours()));
+        if (!requestParams.has('referrer')) requestParams.set('referrer', detectedReferrer());
+        if (!requestParams.has('network')) requestParams.set('network', detectedNetwork());
 
-        if (!response.ok) {
-          const text = await response.text().catch(() => '<non-serializable response>');
-          console.error('Personalization API returned non-OK', response.status, text);
-          setError(`Personalization API error: ${response.status}`);
-          return;
-        }
-
+        const response = await fetch(`/api/personalise?${requestParams.toString()}`);
+        if (!response.ok) throw new Error(`Personalization API error: ${response.status}`);
         const result = await response.json();
-
-        if (result && result.success) {
-          setData(result.data);
-        } else {
-          setError(result?.error || 'Personalization API returned an error');
-        }
-      } catch (err) {
-        setError('Failed to load personalization');
-        console.error('Personalization fetch error:', err);
+        if (!result?.success) throw new Error(result?.error || 'Personalization API returned an error');
+        if (!cancelled) setData(result.data);
+      } catch (caught) {
+        console.error('Personalization fetch error:', caught);
+        if (!cancelled) setError(caught instanceof Error ? caught.message : 'Failed to load personalization');
       } finally {
-        setLoading(false);
+        if (!cancelled) { setLoading(false); setUpdating(false); }
       }
     }
 
-    fetchPersonalization();
+    const refresh = () => void fetchPersonalization(false);
+    void fetchPersonalization(true);
+    window.addEventListener('popstate', refresh);
+    window.addEventListener('edgesync:simulation', refresh);
+    return () => { cancelled = true; window.removeEventListener('popstate', refresh); window.removeEventListener('edgesync:simulation', refresh); };
   }, []);
 
-  return { data, loading, error, simulationActive };
+  return { data, loading, updating, error, simulationActive };
 }

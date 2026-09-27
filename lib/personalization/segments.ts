@@ -1,5 +1,6 @@
 import { UserSegment, PersonalizationRequest } from '../types';
 import { personalizationConfig } from '@/config/personalization';
+import { evaluateRules } from './rules';
 
 export function detectDevice(userAgent: string): 'mobile' | 'desktop' | 'tablet' {
   const ua = userAgent.toLowerCase();
@@ -15,32 +16,24 @@ export function detectDevice(userAgent: string): 'mobile' | 'desktop' | 'tablet'
   return 'desktop';
 }
 
-export function identifySegment(request: PersonalizationRequest): string {
-  const sortedSegments = [...personalizationConfig.segments].sort(
-    (a, b) => b.priority - a.priority
-  );
-
-  for (const segment of sortedSegments) {
-    if (segment.matcher(request)) {
-      return segment.id;
-    }
-  }
-
-  return 'default';
-}
-
 export function buildUserSegment(
   request: PersonalizationRequest,
   isNewUser: boolean,
   experimentVariant?: string
-): UserSegment {
-  const segmentId = identifySegment(request);
+){
+  const decision = evaluateRules(personalizationConfig.segments, request);
 
-  return {
-    id: segmentId,
+  const segment: UserSegment = {
+    id: decision.selectedRuleId,
     country: request.country ?? 'unknown',
     device: request.device as 'mobile' | 'desktop' | 'tablet',
     isNewUser,
     experimentVariant,
+    language: request.language,
+    localHour: request.localHour,
+    referrer: request.referrer,
+    network: request.network,
   };
+
+  return { segment, decision };
 }

@@ -21,11 +21,19 @@ export async function GET(request: NextRequest) {
     const countryOverride = request.nextUrl.searchParams.get('country')?.toUpperCase();
     const deviceOverride = request.nextUrl.searchParams.get('device');
     const visitorOverride = request.nextUrl.searchParams.get('visitor');
+    const languageOverride = request.nextUrl.searchParams.get('language')?.toLowerCase();
+    const hourOverride = Number(request.nextUrl.searchParams.get('hour'));
+    const referrerOverride = request.nextUrl.searchParams.get('referrer');
+    const networkOverride = request.nextUrl.searchParams.get('network');
     const overrides: PersonalizationOverrides = {};
 
     if (countryOverride && /^[A-Z]{2}$/.test(countryOverride)) overrides.country = countryOverride;
     if (deviceOverride === 'mobile' || deviceOverride === 'tablet' || deviceOverride === 'desktop') overrides.device = deviceOverride;
     if (visitorOverride === 'new' || visitorOverride === 'returning') overrides.visitor = visitorOverride;
+    if (languageOverride && /^[a-z]{2}$/.test(languageOverride)) overrides.language = languageOverride;
+    if (Number.isInteger(hourOverride) && hourOverride >= 0 && hourOverride <= 23) overrides.localHour = hourOverride;
+    if (referrerOverride === 'direct' || referrerOverride === 'search' || referrerOverride === 'social' || referrerOverride === 'campaign') overrides.referrer = referrerOverride;
+    if (networkOverride === 'fast' || networkOverride === 'standard' || networkOverride === 'slow') overrides.network = networkOverride;
 
     const result = PersonalizationEngine.personalize(
       country,
@@ -41,6 +49,7 @@ export async function GET(request: NextRequest) {
         segment: result.segment,
         variant: result.variant,
         experimentVariant: result.experimentVariant,
+        decision: result.decision,
       },
     });
   } catch (error) {

@@ -4,6 +4,10 @@ export type UserSegment = {
     device: 'mobile' | 'desktop' | 'tablet';
     isNewUser: boolean;
     experimentVariant?: string;
+    language: string;
+    localHour: number;
+    referrer: ReferrerKind;
+    network: NetworkQuality;
 };
 
 export type ContentVariant = {
@@ -27,9 +31,22 @@ export type PersonalizationConfig = {
 export type SegmentRule = {
   id: string;
   name: string;
-  matcher: (request: PersonalizationRequest) => boolean;
   priority: number;
+  enabled: boolean;
+  fallback?: boolean;
+  expression: RuleGroup;
 };
+
+export type ContextField = 'country' | 'device' | 'visitor' | 'language' | 'localHour' | 'referrer' | 'network' | 'pathname';
+export type RuleOperator = 'equals' | 'not_equals' | 'in' | 'not_in' | 'contains' | 'gte' | 'lte';
+export type RuleValue = string | number | string[];
+export type RuleCondition = { field: ContextField; operator: RuleOperator; value: RuleValue };
+export type RuleGroup = { combinator: 'and' | 'or'; items: Array<RuleCondition | RuleGroup> };
+
+export type ConditionTrace = RuleCondition & { actual: string | number; matched: boolean };
+export type GroupTrace = { combinator: 'and' | 'or'; matched: boolean; items: Array<ConditionTrace | GroupTrace> };
+export type RuleTrace = { id: string; name: string; priority: number; matched: boolean; fallback: boolean; trace: GroupTrace };
+export type DecisionTrace = { selectedRuleId: string; evaluated: RuleTrace[]; conflicts: string[] };
 
 export type ExperimentConfig = {
   id: string;
@@ -45,6 +62,11 @@ export type PersonalizationRequest = {
   cookies: Map<string, string>;
   headers: Map<string, string>;
   pathname: string;
+  visitor: 'new' | 'returning';
+  language: string;
+  localHour: number;
+  referrer: ReferrerKind;
+  network: NetworkQuality;
 };
 
 export type PersonalizationResult = {
@@ -52,10 +74,18 @@ export type PersonalizationResult = {
   segment: UserSegment;
   variant: ContentVariant;
   experimentVariant?: string;
+  decision: DecisionTrace;
 };
+
+export type ReferrerKind = 'direct' | 'search' | 'social' | 'campaign';
+export type NetworkQuality = 'fast' | 'standard' | 'slow';
 
 export type PersonalizationOverrides = {
   country?: string;
   device?: 'mobile' | 'desktop' | 'tablet';
   visitor?: 'new' | 'returning';
+  language?: string;
+  localHour?: number;
+  referrer?: ReferrerKind;
+  network?: NetworkQuality;
 };

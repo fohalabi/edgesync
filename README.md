@@ -157,8 +157,8 @@ npm run db:seed
 
 * [x] **Phase 1 — Foundation:** working middleware, stable identity, content experiments, honest demo-data labelling, refreshed UI, and core tests.
 * [x] **Phase 2 — Authentication:** email/password login, a seeded administrator, signed sessions, logout, throttling, and protected dashboard routes.
-* [ ] **Phase 3 — Context simulator:** shareable device, location, and visitor overrides.
-* [ ] **Phase 4 — Explainable engine:** generic rules, priorities, and decision traces.
+* [x] **Phase 3 — Context simulator:** shareable context overrides, presets, responsive previews, and reload-free evaluation.
+* [x] **Phase 4 — Explainable engine:** serializable AND/OR rules, priorities, fallbacks, conflict detection, and condition-level decision traces.
 * [ ] **Phase 5 — Rule builder:** persistent draft/published rules and visual editing.
 * [ ] **Phase 6 — Analytics:** real event ingestion and measured dashboard data.
 * [ ] **Phase 7 — Experiment studio:** experiment lifecycle, conversions, and uplift.
