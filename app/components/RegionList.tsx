@@ -26,6 +26,7 @@ export default function RegionList({ regions, darkMode }: RegionListProps) {
         Active Regions
       </h2>
       <div className="space-y-3">
+        {regions.length === 0 && <p className={`py-10 text-center text-sm ${textSecondary}`}>No regional activity recorded yet.</p>}
         {regions.map((region, idx) => (
           <div 
             key={idx} 

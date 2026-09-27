@@ -151,6 +151,8 @@ npm run db:seed
 
 `ADMIN_PASSWORD` must contain at least 12 characters. The seed command stores only its bcrypt hash and safely updates the same administrator when run again.
 
+Analytics events use a 30-day reporting window. Set `ANALYTICS_RETENTION_DAYS` in `.env.local` and periodically run `npm run analytics:prune` to remove older events.
+
 ---
 
 ### 📊 Project Phases
@@ -159,8 +161,8 @@ npm run db:seed
 * [x] **Phase 2 — Authentication:** email/password login, a seeded administrator, signed sessions, logout, throttling, and protected dashboard routes.
 * [x] **Phase 3 — Context simulator:** shareable context overrides, presets, responsive previews, and reload-free evaluation.
 * [x] **Phase 4 — Explainable engine:** serializable AND/OR rules, priorities, fallbacks, conflict detection, and condition-level decision traces.
-* [ ] **Phase 5 — Rule builder:** persistent draft/published rules and visual editing.
-* [ ] **Phase 6 — Analytics:** real event ingestion and measured dashboard data.
+* [x] **Phase 5 — Rule builder:** persistent drafts and published rules, visual conditions, live preview, duplication, JSON tools, and version history.
+* [x] **Phase 6 — Analytics:** privacy-preserving impressions and conversions, latency percentiles, regional and segment reporting, live activity, and retention pruning.
 * [ ] **Phase 7 — Experiment studio:** experiment lifecycle, conversions, and uplift.
 * [ ] **Phase 8 — Production polish:** privacy, accessibility, auditability, and deployment hardening.
 

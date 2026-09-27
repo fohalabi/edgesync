@@ -25,12 +25,13 @@ export default function LiveLogFeed({ logs, darkMode }: LiveLogFeedProps) {
     <div className={`${cardBg} p-6 rounded-xl border ${borderColor}`}>
       <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
         <Cpu className="text-blue-500" size={20} />
-        Sample decision log
-        <span className="ml-auto flex items-center gap-2 text-sm text-amber-500 font-normal">
-          Preview data
+        Recent personalization decisions
+        <span className="ml-auto flex items-center gap-2 text-sm text-green-500 font-normal">
+          Live
         </span>
       </h2>
       <div className={`space-y-2 font-mono text-sm ${textSecondary} max-h-80 overflow-y-auto`}>
+        {logs.length === 0 && <p className="py-10 text-center font-sans text-sm">No impressions yet. Visit the homepage to generate the first event.</p>}
         {logs.map((log) => (
           <div 
             key={log.id} 

@@ -19,6 +19,7 @@ export default function PersonalizedHero() {
   const contextLabel = `${unknownCountry ? 'Global' : segment.country} · ${segment.device}`;
   const selectedRule = data.decision.evaluated.find((rule) => rule.id === data.decision.selectedRuleId);
   const selectedConditions = selectedRule ? flattenConditions(selectedRule.trace) : [];
+  function trackPrimaryCta() { void fetch('/api/events/conversion', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ goal: 'dashboard-cta', ruleId: segment.id, variantId: variant.id }), keepalive: true }); }
 
   return (
     <main className={darkMode ? 'min-h-screen bg-[#07110f] text-[#effff7] [--surface:#0b1814]' : 'min-h-screen bg-[#f4f8f4] text-[#10251e] [--surface:#fff]'}>
@@ -40,7 +41,7 @@ export default function PersonalizedHero() {
             <h1 className="max-w-4xl text-5xl font-semibold leading-[.98] tracking-[-0.065em] sm:text-7xl lg:text-[5.5rem]">{variant.content.headline}</h1>
             <p className="mt-7 max-w-2xl text-lg leading-8 opacity-60 sm:text-xl">{variant.content.subheadline}. One request in, one intentional experience out.</p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Link href="/dashboard" className="group inline-flex items-center justify-center gap-2 rounded-full bg-[#76f7b2] px-6 py-3.5 text-sm font-semibold text-[#07110f] shadow-[0_12px_40px_rgba(118,247,178,.18)] transition hover:-translate-y-0.5 hover:bg-[#91ffc5]">{variant.content.cta}<ArrowRight size={17} className="transition group-hover:translate-x-1" /></Link>
+              <Link href="/dashboard" onClick={trackPrimaryCta} className="group inline-flex items-center justify-center gap-2 rounded-full bg-[#76f7b2] px-6 py-3.5 text-sm font-semibold text-[#07110f] shadow-[0_12px_40px_rgba(118,247,178,.18)] transition hover:-translate-y-0.5 hover:bg-[#91ffc5]">{variant.content.cta}<ArrowRight size={17} className="transition group-hover:translate-x-1" /></Link>
               <a href="#how-it-works" className="inline-flex items-center justify-center gap-2 rounded-full border border-current/15 px-6 py-3.5 text-sm font-semibold transition hover:bg-white/5">See the decision <ChevronRight size={16} /></a>
             </div>
             <div className="mt-12 flex flex-wrap gap-x-7 gap-y-3 text-xs font-medium uppercase tracking-[.16em] opacity-45"><span className="flex items-center gap-2"><Check size={14} /> No page reload</span><span className="flex items-center gap-2"><Check size={14} /> Stable variants</span><span className="flex items-center gap-2"><Check size={14} /> Privacy-minded</span></div>

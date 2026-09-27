@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "node --test tests/*.test.ts",
     "db:migrate": "node --env-file=.env.local scripts/migrate.mjs",
-    "db:seed": "node --env-file=.env.local scripts/seed-admin.mjs"
+    "db:seed": "node --env-file=.env.local scripts/seed-admin.mjs",
+    "analytics:prune": "node --env-file=.env.local scripts/prune-events.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

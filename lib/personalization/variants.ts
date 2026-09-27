@@ -1,15 +1,16 @@
 import { ContentVariant, UserSegment } from '@/lib/types';
 import { personalizationConfig } from '@/config/personalization';
 
-export function selectVariant(segment: UserSegment): ContentVariant {
-  const variant = personalizationConfig.variants.find(
+export function selectVariant(segment: UserSegment, variants = personalizationConfig.variants): ContentVariant {
+  const variant = variants.find(
     (v) => v.segment === segment.id
   );
 
   if (!variant) {
     return (
+      variants.find((v) => v.segment === 'default') ||
       personalizationConfig.variants.find((v) => v.segment === 'default') ||
-      personalizationConfig.variants[0]
+      variants[0] || personalizationConfig.variants[0]
     );
   }
 
