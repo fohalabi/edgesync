@@ -51,7 +51,8 @@ export async function GET(request: NextRequest) {
     );
 
     const userAgentValue = request.headers.get('user-agent') || '';
-    if (!/bot|crawler|spider|preview/i.test(userAgentValue)) {
+    const analyticsAllowed = request.nextUrl.searchParams.get('analytics') === 'granted';
+    if (analyticsAllowed && !/bot|crawler|spider|preview/i.test(userAgentValue)) {
       try { await recordImpression(result, Date.now() - startedAt); } catch (eventError) { console.error('Analytics event error:', eventError); }
     }
 
@@ -65,7 +66,7 @@ export async function GET(request: NextRequest) {
         experimentGoal: result.experimentGoal,
         decision: result.decision,
       },
-    });
+    }, { headers: { 'Cache-Control': 'private, no-store' } });
   } catch (error) {
     console.error('Personalization API error:', error);
     

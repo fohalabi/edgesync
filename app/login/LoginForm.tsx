@@ -12,7 +12,7 @@ export default function LoginForm({ nextPath }: { nextPath: string }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <form action={action} className="mt-8 space-y-5">
+    <form action={action} noValidate className="mt-8 space-y-5">
       <input type="hidden" name="next" value={nextPath} />
       <label className="block">
         <span className="mb-2 block text-sm font-medium text-white/70">Email address</span>

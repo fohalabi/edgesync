@@ -6,6 +6,7 @@ import type { ConditionTrace, GroupTrace } from '@/lib/types';
 import { usePersonalization } from '@/hooks/usePersonalization';
 import { useTheme } from '@/hooks/useTheme';
 import ContextSimulator from './ContextSimulator';
+import ConsentBanner, { PrivacyButton, readAnalyticsConsent } from './ConsentBanner';
 
 export default function PersonalizedHero() {
   const { data, loading, updating, error, simulationActive } = usePersonalization();
@@ -19,7 +20,10 @@ export default function PersonalizedHero() {
   const contextLabel = `${unknownCountry ? 'Global' : segment.country} · ${segment.device}`;
   const selectedRule = data.decision.evaluated.find((rule) => rule.id === data.decision.selectedRuleId);
   const selectedConditions = selectedRule ? flattenConditions(selectedRule.trace) : [];
-  function trackPrimaryCta() { void fetch('/api/events/conversion', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ goal: experimentGoal || 'dashboard-cta', ruleId: segment.id, variantId: variant.id, experimentId, experimentVariant }), keepalive: true }); }
+  function trackPrimaryCta() {
+    if (readAnalyticsConsent() !== 'granted') return;
+    void fetch('/api/events/conversion', { method: 'POST', headers: { 'content-type': 'application/json', 'x-edgesync-analytics': 'granted' }, body: JSON.stringify({ goal: experimentGoal || 'dashboard-cta', ruleId: segment.id, variantId: variant.id, experimentId, experimentVariant }), keepalive: true });
+  }
 
   return (
     <main className={darkMode ? 'min-h-screen bg-[#07110f] text-[#effff7] [--surface:#0b1814]' : 'min-h-screen bg-[#f4f8f4] text-[#10251e] [--surface:#fff]'}>
@@ -31,7 +35,7 @@ export default function PersonalizedHero() {
           <nav className="flex items-center gap-1 rounded-full border border-current/10 bg-white/5 p-1.5 backdrop-blur-xl">
             <a className="hidden rounded-full px-4 py-2 text-sm opacity-60 transition hover:opacity-100 sm:block" href="#how-it-works">How it works</a>
             <a href="https://github.com/fohalabi/edgesync" target="_blank" rel="noreferrer" className="grid h-9 w-9 place-items-center rounded-full transition hover:bg-white/10" aria-label="View EdgeSync on GitHub"><Github size={17} /></a>
-            <button onClick={toggleTheme} className="grid h-9 w-9 place-items-center rounded-full transition hover:bg-white/10" aria-label="Toggle theme">{darkMode ? <Sun size={17} /> : <Moon size={17} />}</button>
+            <button onClick={toggleTheme} className="grid h-9 w-9 place-items-center rounded-full transition hover:bg-white/10" aria-label={darkMode ? 'Use light theme' : 'Use dark theme'} aria-pressed={darkMode}>{darkMode ? <Sun size={17} /> : <Moon size={17} />}</button>
           </nav>
         </header>
 
@@ -74,7 +78,9 @@ export default function PersonalizedHero() {
       <section id="how-it-works" className={darkMode ? 'border-t border-white/8 bg-white/[.025]' : 'border-t border-black/8 bg-white'}>
         <div className="mx-auto w-full max-w-[96rem] px-5 py-24 sm:px-8 xl:px-12"><div className="mb-14 max-w-2xl"><p className="mb-3 text-xs font-semibold uppercase tracking-[.2em] text-emerald-400">One request. Three decisions.</p><h2 className="text-3xl font-semibold tracking-[-.04em] sm:text-5xl">Personalization without the detour.</h2></div><div className="grid gap-px overflow-hidden rounded-3xl border border-current/10 bg-current/10 md:grid-cols-3"><Feature number="01" title="Read the context" copy="Country, device and returning-visitor signals are interpreted before the experience is selected." /><Feature number="02" title="Match intentionally" copy="Prioritized segments choose a content variant with deterministic experiment assignment." /><Feature number="03" title="Deliver consistently" copy="A durable anonymous identity keeps the experience stable from one request to the next." /></div></div>
       </section>
+      <footer className="mx-auto flex w-full max-w-[96rem] items-center justify-between gap-4 px-5 py-8 text-xs sm:px-8 xl:px-12"><span className="opacity-40">© {new Date().getFullYear()} EdgeSync</span><PrivacyButton /></footer>
       <ContextSimulator />
+      <ConsentBanner />
     </main>
   );
 }

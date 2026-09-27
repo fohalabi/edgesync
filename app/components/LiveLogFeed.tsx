@@ -17,17 +17,17 @@ interface LiveLogFeedProps {
 }
 
 export default function LiveLogFeed({ logs, darkMode }: LiveLogFeedProps) {
-  const cardBg = darkMode ? 'bg-gray-800' : 'bg-white';
-  const borderColor = darkMode ? 'border-gray-700' : 'border-gray-200';
-  const textSecondary = darkMode ? 'text-gray-400' : 'text-gray-600';
+  const cardBg = darkMode ? 'bg-[#0d1c18]' : 'bg-white';
+  const borderColor = darkMode ? 'border-white/10' : 'border-[#10251e]/10';
+  const textSecondary = darkMode ? 'text-white/40' : 'text-[#10251e]/50';
 
   return (
-    <div className={`${cardBg} p-6 rounded-xl border ${borderColor}`}>
-      <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-        <Cpu className="text-blue-500" size={20} />
+    <section className={`${cardBg} rounded-3xl border ${borderColor} p-5 sm:p-6`}>
+      <h2 className="mb-5 flex items-center gap-2 text-base font-semibold">
+        <Cpu className="text-[#20b976]" size={18} />
         Recent personalization decisions
-        <span className="ml-auto flex items-center gap-2 text-sm text-green-500 font-normal">
-          Live
+        <span className="ml-auto flex items-center gap-2 text-xs font-normal text-[#20b976]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#20b976]" />Live
         </span>
       </h2>
       <div className={`space-y-2 font-mono text-sm ${textSecondary} max-h-80 overflow-y-auto`}>
@@ -35,9 +35,9 @@ export default function LiveLogFeed({ logs, darkMode }: LiveLogFeedProps) {
         {logs.map((log) => (
           <div 
             key={log.id} 
-            className={`p-3 rounded border ${borderColor} hover:bg-opacity-50 transition-all animate-slideIn`}
+            className={`animate-slideIn rounded-xl border p-3 ${borderColor}`}
             style={{
-              backgroundColor: darkMode ? 'rgba(59, 130, 246, 0.05)' : 'rgba(59, 130, 246, 0.02)'
+              backgroundColor: darkMode ? 'rgba(255,255,255,.018)' : 'rgba(16,37,30,.018)'
             }}
           >
             <span className="text-blue-500">[{log.time}]</span> → 
@@ -52,6 +52,6 @@ export default function LiveLogFeed({ logs, darkMode }: LiveLogFeedProps) {
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
