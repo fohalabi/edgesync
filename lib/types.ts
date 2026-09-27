@@ -15,6 +15,7 @@ export type ContentVariant = {
         cta: string;
         theme?: 'default' | 'premium' | 'casual';
     };
+    experimentContent?: Record<string, Partial<ContentVariant['content']>>;
 };
 
 export type PersonalizationConfig = {
@@ -47,7 +48,14 @@ export type PersonalizationRequest = {
 };
 
 export type PersonalizationResult = {
+  userId: string;
   segment: UserSegment;
   variant: ContentVariant;
   experimentVariant?: string;
+};
+
+export type PersonalizationOverrides = {
+  country?: string;
+  device?: 'mobile' | 'desktop' | 'tablet';
+  visitor?: 'new' | 'returning';
 };

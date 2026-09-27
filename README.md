@@ -7,7 +7,7 @@ A lightweight **Edge-powered personalization engine** that tailors website conte
 This MVP demonstrates how **personalized experiences** can be served right from the edge with no backend round trips or page reloads.
 It intercepts requests using **Next.js Middleware**, detects user context, and renders personalized variants immediately.
 
-Now with a **visual dashboard** that shows edge performance, live logs, and personalization analytics.
+It also includes a polished **analytics dashboard preview**. Its metrics are clearly labelled demo data; real event ingestion is planned for a later phase.
 
 ---
 
@@ -15,9 +15,9 @@ Now with a **visual dashboard** that shows edge performance, live logs, and pers
 
 *  **Edge Middleware Integration** — detects context at the edge before response.
 *  **Location & Segment Awareness** — adapts UI content per user region.
-*  **Interactive Dashboard** — visualize performance, user segments, and live logs.
+*  **Interactive Dashboard Preview** — explore the planned performance, segment, and decision-log experience.
 *  **Persistent Context** — uses cookies to maintain personalized states.
-*  **Zero Backend Load** — personalization handled completely at the edge.
+*  **No Database Required** — Phase 1 personalization runs from configuration and durable anonymous cookies.
 *  **Configurable Rules** — easy to modify segments and variants.
 
 ---
@@ -40,10 +40,10 @@ edge-personalization/
 ├── middleware.ts                     # Edge logic entry point (detect location & segment)
 │
 ├── app/
-│   ├── page.tsx                       # Main landing page (PersonalizedHero)
+│   ├── page.tsx                       # Main landing page (PersonalizeHero)
 │   ├── dashboard/
 │   │   └── page.tsx                   # Dashboard main page entry
-│   └── api/personalize/route.ts       # API route for testing personalization logic
+│   └── api/personalise/route.ts       # API route for personalization logic
 │
 ├── lib/
 │   ├── types.ts                       # Shared TypeScript interfaces
@@ -69,7 +69,7 @@ edge-personalization/
 │   │   ├── LiveLogFeed.tsx            # Real-time log updates from edge requests
 │   │   └── ComingSoon.tsx             # "Coming Soon" placeholder for future features
 │   │
-│   └── PersonalizedHero.tsx           # Front-facing component for users
+│   └── PersonalizeHero.tsx            # Front-facing component for users
 │
 └── hooks/
     └── usePersonalization.ts          # Hook to read and manage personalization state
@@ -87,7 +87,7 @@ edge-personalization/
 
 3. **Frontend Display:**
 
-   * `/components/PersonalizedHero.tsx` uses `usePersonalization()` to show localized UI.
+   * `/app/components/PersonalizeHero.tsx` uses `usePersonalization()` to show localized UI.
    * `/app/dashboard/page.tsx` + dashboard components visualize personalization metrics in real-time.
 
 4. **Cookies & Persistence:**
@@ -140,14 +140,29 @@ npm run dev
 vercel deploy
 ```
 
+### Local authentication setup
+
+Phase 2 uses a PostgreSQL-backed administrator account and a signed HTTP-only session. Add `DATABASE_URL`, `SESSION_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and optionally `ADMIN_NAME` to `.env.local`, then run:
+
+```bash
+npm run db:migrate
+npm run db:seed
+```
+
+`ADMIN_PASSWORD` must contain at least 12 characters. The seed command stores only its bcrypt hash and safely updates the same administrator when run again.
+
 ---
 
-### 📊 Future Roadmap
+### 📊 Project Phases
 
-* [ ] Add analytics to track personalization performance
-* [ ] Integrate user metrics and dashboard insights API
-* [ ] Introduce time-based or behavior-based segments
-* [ ] Add team view to monitor personalization efficiency
+* [x] **Phase 1 — Foundation:** working middleware, stable identity, content experiments, honest demo-data labelling, refreshed UI, and core tests.
+* [x] **Phase 2 — Authentication:** email/password login, a seeded administrator, signed sessions, logout, throttling, and protected dashboard routes.
+* [ ] **Phase 3 — Context simulator:** shareable device, location, and visitor overrides.
+* [ ] **Phase 4 — Explainable engine:** generic rules, priorities, and decision traces.
+* [ ] **Phase 5 — Rule builder:** persistent draft/published rules and visual editing.
+* [ ] **Phase 6 — Analytics:** real event ingestion and measured dashboard data.
+* [ ] **Phase 7 — Experiment studio:** experiment lifecycle, conversions, and uplift.
+* [ ] **Phase 8 — Production polish:** privacy, accessibility, auditability, and deployment hardening.
 
 ---
 🔗 [LinkedIn](https://linkedin.com/in/fohalabi) 

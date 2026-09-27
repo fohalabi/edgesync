@@ -13,7 +13,13 @@ export function selectVariant(segment: UserSegment): ContentVariant {
     );
   }
 
-  return variant;
+  const experimentOverride = segment.experimentVariant
+    ? variant.experimentContent?.[segment.experimentVariant]
+    : undefined;
+
+  return experimentOverride
+    ? { ...variant, content: { ...variant.content, ...experimentOverride } }
+    : variant;
 }
 
 export function getVariantById(variantId: string): ContentVariant | undefined {

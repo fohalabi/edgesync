@@ -1,23 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "EdgeSync",
-  description: "Edge-powered personalization layer for modern web apps",
+  title: {
+    default: "EdgeSync — Personalization at the speed of context",
+    template: "%s · EdgeSync",
+  },
+  description: "An edge-powered personalization engine that adapts content to each visitor's context.",
   icons: {
-    icon: "public/26A1_color.png",
-    //shortcut: "public/26A1_color.png"
+    icon: "/26A1_color.png",
   }
 };
 
@@ -27,10 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="en" suppressHydrationWarning>
+      <body className="antialiased">
         {children}
       </body>
     </html>

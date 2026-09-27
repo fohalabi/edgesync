@@ -1,4 +1,4 @@
-import { PersonalizationRequest, PersonalizationResult } from '@/lib/types';
+import { PersonalizationOverrides, PersonalizationRequest, PersonalizationResult } from '@/lib/types';
 import { getCookie, generateUserId, COOKIES } from '@/lib/utils/cookies';
 import { assignExperimentVariant } from '../utils/hash';
 import { detectDevice, buildUserSegment } from './segments';
@@ -10,16 +10,21 @@ export class PersonalizationEngine {
     country: string | undefined,
     userAgent: string,
     cookieString: string,
-    pathname: string
+    pathname: string,
+    overrides?: PersonalizationOverrides
   ): PersonalizationResult {
     const existingUserId = getCookie(COOKIES.USER_ID, cookieString);
     const userId = existingUserId || generateUserId();
-    const isNewUser = !existingUserId;
+    const isNewUser = overrides?.visitor === 'new'
+      ? true
+      : overrides?.visitor === 'returning'
+        ? false
+        : !existingUserId;
 
-    const device = detectDevice(userAgent);
+    const device = overrides?.device || detectDevice(userAgent);
 
     const request: PersonalizationRequest = {
-      country,
+      country: overrides?.country || country,
       device,
       cookies: new Map(
         cookieString.split('; ').map((c) => {
@@ -55,15 +60,16 @@ export class PersonalizationEngine {
     const variant = selectVariant(segment);
 
     return {
+      userId,
       segment,
       variant,
       experimentVariant,
     };
   }
 
-  static getCookiesToSet(result: PersonalizationResult, userId: string): Record<string, string> {
+  static getCookiesToSet(result: PersonalizationResult): Record<string, string> {
     const cookies: Record<string, string> = {
-      [COOKIES.USER_ID]: userId,
+      [COOKIES.USER_ID]: result.userId,
       [COOKIES.SEGMENT]: result.segment.id,
     };
 

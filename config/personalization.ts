@@ -48,6 +48,10 @@ export const personalizationConfig: PersonalizationConfig = {
         cta: 'View Dashboard',
         theme: 'default',
       },
+      experimentContent: {
+        'variant-a': { cta: 'See it in action' },
+        'variant-b': { headline: 'Your fastest experience starts at the edge' },
+      },
     },
     {
       id: 'mobile-international-variant',
@@ -57,6 +61,10 @@ export const personalizationConfig: PersonalizationConfig = {
         subheadline: 'Real-time personalization from 24+ edge locations worldwide',
         cta: 'Explore Analytics',
         theme: 'casual',
+      },
+      experimentContent: {
+        'variant-a': { cta: 'Explore the live demo' },
+        'variant-b': { headline: 'One web experience, intelligently adapted worldwide' },
       },
     },
     {
@@ -68,6 +76,10 @@ export const personalizationConfig: PersonalizationConfig = {
         cta: 'See Performance Metrics',
         theme: 'premium',
       },
+      experimentContent: {
+        'variant-a': { cta: 'Inspect the edge layer' },
+        'variant-b': { headline: 'Personalization infrastructure built for the edge' },
+      },
     },
     {
       id: 'desktop-default-variant',
@@ -78,6 +90,10 @@ export const personalizationConfig: PersonalizationConfig = {
         cta: 'View Dashboard',
         theme: 'default',
       },
+      experimentContent: {
+        'variant-a': { cta: 'Open the experience' },
+        'variant-b': { headline: 'Make every request feel intentionally personal' },
+      },
     },
     {
       id: 'default-variant',
@@ -87,6 +103,10 @@ export const personalizationConfig: PersonalizationConfig = {
         subheadline: 'Real-time intelligent content delivery with sub-50ms latency',
         cta: 'Get Started',
         theme: 'default',
+      },
+      experimentContent: {
+        'variant-a': { cta: 'Explore EdgeSync' },
+        'variant-b': { headline: 'The personalization layer that moves at edge speed' },
       },
     },
   ],

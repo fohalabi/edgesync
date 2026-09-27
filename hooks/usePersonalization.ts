@@ -7,12 +7,21 @@ export function usePersonalization() {
   const [data, setData] = useState<PersonalizationResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [simulationActive, setSimulationActive] = useState(false);
 
   useEffect(() => {
     async function fetchPersonalization() {
       try {
         // match the API route folder spelling ('personalise')
-        const response = await fetch('/api/personalise');
+        const params = new URLSearchParams(window.location.search);
+        const simulationParams = new URLSearchParams();
+        for (const key of ['country', 'device', 'visitor']) {
+          const value = params.get(key);
+          if (value) simulationParams.set(key, value);
+        }
+        setSimulationActive(simulationParams.size > 0);
+        const query = simulationParams.toString();
+        const response = await fetch(`/api/personalise${query ? `?${query}` : ''}`);
 
         if (!response.ok) {
           const text = await response.text().catch(() => '<non-serializable response>');
@@ -39,5 +48,5 @@ export function usePersonalization() {
     fetchPersonalization();
   }, []);
 
-  return { data, loading, error };
+  return { data, loading, error, simulationActive };
 }
