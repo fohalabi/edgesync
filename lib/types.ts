@@ -74,8 +74,13 @@ export type PersonalizationResult = {
   segment: UserSegment;
   variant: ContentVariant;
   experimentVariant?: string;
+  experimentId?: string;
+  experimentGoal?: string;
   decision: DecisionTrace;
 };
+
+export type RuntimeExperimentVariant = { id: string; key: string; name: string; weight: number; content: Partial<ContentVariant['content']> };
+export type RuntimeExperiment = { id: string; name: string; traffic: number; targetSegment: string; goal: string; audience: RuleGroup; variants: RuntimeExperimentVariant[] };
 
 export type ReferrerKind = 'direct' | 'search' | 'social' | 'campaign';
 export type NetworkQuality = 'fast' | 'standard' | 'slow';

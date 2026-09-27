@@ -163,7 +163,7 @@ Analytics events use a 30-day reporting window. Set `ANALYTICS_RETENTION_DAYS` i
 * [x] **Phase 4 — Explainable engine:** serializable AND/OR rules, priorities, fallbacks, conflict detection, and condition-level decision traces.
 * [x] **Phase 5 — Rule builder:** persistent drafts and published rules, visual conditions, live preview, duplication, JSON tools, and version history.
 * [x] **Phase 6 — Analytics:** privacy-preserving impressions and conversions, latency percentiles, regional and segment reporting, live activity, and retention pruning.
-* [ ] **Phase 7 — Experiment studio:** experiment lifecycle, conversions, and uplift.
+* [x] **Phase 7 — Experiment studio:** weighted deterministic assignment, audience targeting, lifecycle controls, conversion results, and winner promotion.
 * [ ] **Phase 8 — Production polish:** privacy, accessibility, auditability, and deployment hardening.
 
 ---

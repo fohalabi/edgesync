@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { assignExperimentVariant, consistentHash, hashString } from '../lib/utils/hash.ts';
+import { assignExperimentVariant, assignWeightedVariant, consistentHash, hashString } from '../lib/utils/hash.ts';
 import { generateUserId, getCookie } from '../lib/utils/cookies.ts';
 
 test('hashing is deterministic and stays inside its bucket range', () => {
@@ -19,6 +19,12 @@ test('experiment assignment is stable for the same visitor', () => {
 
 test('zero experiment traffic always resolves to control', () => {
   assert.equal(assignExperimentVariant('visitor-42', 'hero-test', ['a', 'b'], 0), 'control');
+});
+
+test('weighted experiment assignments are stable and respect excluded traffic', () => {
+  const variants = [{ key: 'control', weight: 70 }, { key: 'treatment', weight: 30 }];
+  assert.equal(assignWeightedVariant('visitor-42', 'pricing-test', variants, 100), assignWeightedVariant('visitor-42', 'pricing-test', variants, 100));
+  assert.equal(assignWeightedVariant('visitor-42', 'pricing-test', variants, 0), undefined);
 });
 
 test('cookie utilities preserve anonymous visitor identity', () => {

@@ -6,15 +6,17 @@ import type { PersonalizationResult } from '@/lib/types';
 export function anonymousVisitorId(id: string) { return createHash('sha256').update(id).digest('hex').slice(0, 40); }
 
 export async function recordImpression(result: PersonalizationResult, latencyMs: number) {
-  await db.query(`INSERT INTO events (event_type,visitor_id,rule_id,variant_id,country,device,language,referrer,network,latency_ms)
-    VALUES ('impression',$1,$2,$3,$4,$5,$6,$7,$8,$9)`, [anonymousVisitorId(result.userId), result.segment.id, result.variant.id, result.segment.country, result.segment.device, result.segment.language, result.segment.referrer, result.segment.network, latencyMs]);
+  const visitorId=anonymousVisitorId(result.userId);
+  await db.query(`INSERT INTO events (event_type,visitor_id,rule_id,variant_id,country,device,language,referrer,network,latency_ms,experiment_id,experiment_variant)
+    VALUES ('impression',$1::varchar,$2::varchar,$3::varchar,$4::varchar,$5::varchar,$6::varchar,$7::varchar,$8::varchar,$9,$10::uuid,$11::varchar)`, [visitorId, result.segment.id, result.variant.id, result.segment.country, result.segment.device, result.segment.language, result.segment.referrer, result.segment.network, latencyMs,result.experimentId||null,result.experimentVariant||null]);
+  if(result.experimentId&&result.experimentVariant) await db.query(`INSERT INTO experiment_assignments(experiment_id,visitor_id,variant_id) SELECT $1::uuid,$2::varchar,id FROM experiment_variants WHERE experiment_id=$1::uuid AND variant_key=$3::varchar ON CONFLICT DO NOTHING`,[result.experimentId,visitorId,result.experimentVariant]);
 }
 
-export async function recordConversion(visitorId: string, ruleId: string | null, variantId: string | null, goal: string) {
-  await db.query(`INSERT INTO events (event_type,visitor_id,rule_id,variant_id,goal)
-    SELECT 'conversion',$1,$2,$3,$4 WHERE NOT EXISTS (
-      SELECT 1 FROM events WHERE event_type='conversion' AND visitor_id=$1 AND goal=$4 AND created_at>NOW()-INTERVAL '24 hours'
-    )`, [anonymousVisitorId(visitorId), ruleId, variantId, goal.slice(0, 120)]);
+export async function recordConversion(visitorId: string, ruleId: string | null, variantId: string | null, goal: string, experimentId?:string|null, experimentVariant?:string|null) {
+  await db.query(`INSERT INTO events (event_type,visitor_id,rule_id,variant_id,goal,experiment_id,experiment_variant)
+    SELECT 'conversion',$1::varchar,$2::varchar,$3::varchar,$4::varchar,$5::uuid,$6::varchar WHERE NOT EXISTS (
+      SELECT 1 FROM events WHERE event_type='conversion' AND visitor_id=$1::varchar AND goal=$4::varchar AND created_at>NOW()-INTERVAL '24 hours'
+    )`, [anonymousVisitorId(visitorId), ruleId, variantId, goal.slice(0, 120),experimentId||null,experimentVariant||null]);
 }
 
 export type DashboardAnalytics = {

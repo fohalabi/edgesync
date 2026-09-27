@@ -14,12 +14,12 @@ export default function PersonalizedHero() {
   if (loading) return <main className="grid min-h-screen place-items-center bg-[#07110f] text-[#e7fff5]"><div className="flex items-center gap-3 text-sm text-emerald-100/70"><span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#76f7b2] shadow-[0_0_24px_#76f7b2]" />Resolving your edge context…</div></main>;
   if (error || !data) return <main className="grid min-h-screen place-items-center bg-[#07110f] px-6 text-[#e7fff5]"><div className="max-w-md rounded-3xl border border-red-300/20 bg-white/5 p-8 text-center"><p className="mb-2 text-lg font-semibold">The edge did not respond.</p><p className="text-sm text-white/55">Refresh the page to retry the personalization request.</p></div></main>;
 
-  const { variant, segment } = data;
+  const { variant, segment, experimentId, experimentVariant, experimentGoal } = data;
   const unknownCountry = !segment.country || segment.country === 'unknown';
   const contextLabel = `${unknownCountry ? 'Global' : segment.country} · ${segment.device}`;
   const selectedRule = data.decision.evaluated.find((rule) => rule.id === data.decision.selectedRuleId);
   const selectedConditions = selectedRule ? flattenConditions(selectedRule.trace) : [];
-  function trackPrimaryCta() { void fetch('/api/events/conversion', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ goal: 'dashboard-cta', ruleId: segment.id, variantId: variant.id }), keepalive: true }); }
+  function trackPrimaryCta() { void fetch('/api/events/conversion', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ goal: experimentGoal || 'dashboard-cta', ruleId: segment.id, variantId: variant.id, experimentId, experimentVariant }), keepalive: true }); }
 
   return (
     <main className={darkMode ? 'min-h-screen bg-[#07110f] text-[#effff7] [--surface:#0b1814]' : 'min-h-screen bg-[#f4f8f4] text-[#10251e] [--surface:#fff]'}>
